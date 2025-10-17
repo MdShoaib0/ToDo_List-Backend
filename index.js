@@ -14,6 +14,6 @@ connectDB();
 
 app.use("/task", router);
 
-app.listen(process.env.PORT, () => {
-  console.log(`🚀 Server is running at port no: ${process.env.PORT}`);
+app.listen(5000, () => {
+  console.log(`🚀 Server is running at port no: ${5000}`);
 });

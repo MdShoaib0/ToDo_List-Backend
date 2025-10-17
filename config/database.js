@@ -1,11 +1,8 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const connectDB = async () => {
     try {
-        const connections = await mongoose.connect(process.env.MONGO_URI, {
+        const connections = await mongoose.connect("mongodb+srv://mdshoaib0:Kabooter123%40@mdshoaib.991gs6w.mongodb.net/Task-Manager", {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         })
