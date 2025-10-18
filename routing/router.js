@@ -1,10 +1,8 @@
 import Express from "express";
 import Task from "../models/taskModel.js";
 
-
 const router = Express.Router();
 router.use(Express.json());
-
 
 router.get("/", async (req, res) => {
   try {
@@ -15,7 +13,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
-
 
 router.post("/", async (req, res) => {
   try {
@@ -28,7 +25,7 @@ router.post("/", async (req, res) => {
     const newTask = new Task(data);
     await newTask.save();
 
-    res.status(201).json({ message: "Task added successfully"});
+    res.status(201).json({ message: "Task added successfully" });
   } catch (error) {
     console.error("Error adding task:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -62,5 +59,39 @@ router.delete("/:taskId", async (req, res) => {
   }
 });
 
+router.patch("/:taskId", async (req, res) => {
+  try {
+    const { title, category, description } = req.body;
+    const taskID = req.params.taskId;
+
+    if (!title && !category && !description) {
+      return res.status(400).json({ 
+        error: "At least one field (title, category, or description) is required" 
+      });
+    }
+
+    const updatedTask = await Task.findOneAndUpdate(
+      { _id: taskID },
+      { title, category, description },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    res.status(200).json({
+      message: "Task updated successfully",
+      task: updatedTask
+    });
+
+  } catch (error) {
+    console.error("Error updating task:", error);
+    res.status(500).json({ 
+      error: "Internal server error",
+      details: error.message 
+    });
+  }
+});
 
 export default router;
