@@ -1,5 +1,6 @@
 import Express from "express";
 import Task from "../models/taskModel.js";
+import Namaz from "../models/namazModel.js";
 
 const router = Express.Router();
 router.use(Express.json());
@@ -31,6 +32,7 @@ router.post("/", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
 
 router.delete("/:taskId", async (req, res) => {
   try {
