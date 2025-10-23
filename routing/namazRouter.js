@@ -3,54 +3,35 @@ import Namaz from "../models/namazModel.js"
 
 const router = express.Router();
 
-/**
- * ✅ GET /task/:name
- * Fetch the count for a specific namaz (e.g., Fajr, Dhuhr)
- */
-router.get("/:name", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const { name } = req.params;
-    let namaz = await Namaz.findOne({ name });
-
-    // If no record found, create one with 0 count
-    if (!namaz) {
-      namaz = await Namaz.create({ name, namazCount: 0 });
-    }
-
-    res.json(namaz);
+    const newData = await Namaz.find();
+    res.send(newData);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error while fetching data" });
+    console.log(error)
   }
-});
+})
 
-/**
- * ✅ POST /task/:name
- * Update or create a namaz record with new count
- */
-router.post("/:name", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const { name } = req.params;
-    const { namazCount } = req.body;
-
-    if (typeof namazCount !== "number") {
-      return res.status(400).json({ message: "Invalid namazCount" });
-    }
-
-    let namaz = await Namaz.findOne({ name });
-
-    if (namaz) {
-      namaz.namazCount = namazCount;
-      await namaz.save();
+    const body = req.body;
+    const namazarr = await Namaz.findOne({name: body.name});
+    if(!namazarr) {
+      const newNamaz = new Namaz(body);
+    await newNamaz.save();
+    res.send(newNamaz);
     } else {
-      namaz = await Namaz.create({ name, namazCount });
+      const updatedNamaz = await Namaz.findOneAndUpdate(
+        {name: body.name},
+        {count: body.count},
+        {new: true}
+      )
+      res.send(updatedNamaz);
     }
-
-    res.status(200).json({ message: `${name} count updated`, namaz });
+    
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error while updating data" });
+    console.log(error)
   }
-});
+})
 
 export default router;
